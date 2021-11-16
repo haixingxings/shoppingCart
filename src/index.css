@@ -1,0 +1,40 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+html {
+  font-size: 100%;
+  background: #fff;
+}
+body {
+  font-family: "pingfang";
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #666;
+}
+ul {
+  list-style-type: none;
+  /* display: block; */
+  padding: 0;
+  margin: 0;
+  -webkit-margin-before: 0em;
+  -webkit-margin-after: 0em;
+  -webkit-margin-start: 0rem;
+  -webkit-margin-end: 0rem;
+  -webkit-padding-start: 0rem;
+}
+.text-center {
+  text-align: center;
+}
+
+.footer {
+  margin-top: 230px;
+  width: 100%;
+  text-align: center;
+  background-color: #000;
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+}
