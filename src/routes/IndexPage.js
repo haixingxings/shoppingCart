@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import axios from "axios";
-import { Pagination } from "antd";
+import { Pagination, Radio } from "antd";
 import Footer from "../components/footer";
 import Cart from "../components/cart";
 import FLoatNav from "../components/floatNav";
@@ -30,14 +30,12 @@ class IndexPage extends React.Component {
         { content: "按金额", checked: false, key: "byPrice" },
       ],
       current: 1,
+      // size: "large",
     };
   }
   componentDidMount() {
     // let info = { page: 1, pageSize: 15, size: "all", remark: "all" };
-    this.props.dispatch({
-      type: "counter/fetch",
-      payload: { page: 1, pageSize: 15, size: "all", remark: "all" },
-    });
+    this.getCartList();
     // this.getData();
     let carList =
       localStorage.getItem("carList") &&
@@ -57,31 +55,44 @@ class IndexPage extends React.Component {
       });
     }
   }
+  //获取购物车列表数据
+  getCartList = () => {
+    this.props.dispatch({
+      type: "counter/fetch",
+      payload: { page: 1, pageSize: 15, size: "all", remark: "all" },
+    });
+  };
   showCart = (bool) => {
     this.setState({
       isShowCart: bool,
     });
   };
-  getData = (page = 1, pageSize = 15, size = "all", remark = "all") => {
-    let url =
-      "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
-    axios
-      .get(
-        url +
-          "/getproductList" +
-          `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
-      )
-      .then((res) => {
-        if (res.data.code === "200") {
-          let data = res.data.data.content.data;
-          this.setState({
-            dataList: data,
-          });
-        }
-      });
+  // getData = (page = 1, pageSize = 15, size = "all", remark = "all") => {
+  //   let url =
+  //     "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
+  //   axios
+  //     .get(
+  //       url +
+  //         "/getproductList" +
+  //         `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
+  //     )
+  //     .then((res) => {
+  //       if (res.data.code === "200") {
+  //         let data = res.data.data.content.data;
+  //         this.setState({
+  //           dataList: data,
+  //         });
+  //       }
+  //     });
+  // };
+  handleSizeChange = (e, id) => {
+    console.log("选择的尺寸", e.target.value);
+    this.setState({ size: e.target.value });
+    let info = { id, size: e.target.value };
+    this.props.dispatch({ type: "counter/changeSize", info });
   };
   addToCart = (info) => {
-    this.props.dispatch({ type: "counter/add", info });
+    this.props.dispatch({ type: "counter/sendCar", info });
   };
   getVal = (index) => {
     //复制原来的数组
@@ -139,6 +150,7 @@ class IndexPage extends React.Component {
     );
   };
   render() {
+    // console.log("购物车数据", this.props.counter);
     return (
       <div className={`${styles.normal}`}>
         <div className={styles.container}>
@@ -229,6 +241,28 @@ class IndexPage extends React.Component {
                         >
                           {item.detail.subTitle}
                         </a>
+                        <div style={{ margin: "10px 0" }}>
+                          <Radio.Group
+                            // defaultValue={"s"}
+                            value={
+                              item.detail.currentSize || item.detail.sizes[0]
+                            }
+                            onChange={(e) => {
+                              this.handleSizeChange(e, item.id);
+                            }}
+                          >
+                            {item.detail.sizes.map((h) => {
+                              return (
+                                <Radio.Button
+                                  value={h}
+                                  key={item.id + Math.random()}
+                                >
+                                  {h}
+                                </Radio.Button>
+                              );
+                            })}
+                          </Radio.Group>
+                        </div>
                         <div className={styles["product-box"]}>
                           <div className={styles["product-price"]}>
                             <span>¥{item.detail.price}</span>

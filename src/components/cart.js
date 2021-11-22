@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import { message } from "antd";
+import { message, Radio } from "antd";
 import car2 from "../assets/car2.png";
 import close from "../assets/close.png";
 import Add from "../assets/add.png";
@@ -24,7 +24,7 @@ class Cart extends React.Component {
     this.props.dispatch({ type: "counter/clearAll" });
   };
   addToCart = (info) => {
-    this.props.dispatch({ type: "counter/add", info });
+    this.props.dispatch({ type: "counter/sendCar", info });
   };
   goToPay = () => {
     if (this.props.counter.carList.length) {
@@ -35,6 +35,12 @@ class Cart extends React.Component {
       message.info("快去添加你所喜欢的商品吧");
       this.props.closeSelf && this.props.closeSelf();
     }
+  };
+  handleSizeChange = (e, id) => {
+    console.log("在内部选择尺寸", e.target.value);
+    this.setState({ size: e.target.value });
+    let info = { id, size: e.target.value };
+    this.props.dispatch({ type: "counter/changeSize", info });
   };
   render() {
     return (
@@ -56,7 +62,7 @@ class Cart extends React.Component {
             <ul>
               {this.props.counter.carList.map((item) => {
                 return (
-                  <li key={item.id}>
+                  <li key={item.id + Math.random()}>
                     <div className={assetsStyle.infoLeft}>
                       <div>
                         <img src={item.detail.imgSm} alt="img" />
@@ -77,23 +83,56 @@ class Cart extends React.Component {
                             {item.detail.sum}
                           </span>
                         </p>
+                        <div style={{ margin: "10px 0" }}>
+                          <Radio.Group
+                            // defaultValue={"s"}
+                            value={item.detail.carSize}
+                            onChange={(e) => {
+                              this.handleSizeChange(e, item.id);
+                            }}
+                          >
+                            {item.detail.sizes.map((h) => {
+                              return (
+                                <Radio.Button
+                                  value={h}
+                                  key={item.id + Math.random()}
+                                >
+                                  {h}
+                                </Radio.Button>
+                              );
+                            })}
+                          </Radio.Group>
+                        </div>
                       </div>
                     </div>
-                    <img
-                      src={Cut}
-                      onClick={() => this.clear(item.id)}
-                      alt=""
-                      style={{ width: 20, height: 20 }}
-                    />
-                    <span style={{ fontSize: 16 }}>{item.detail.sum}</span>
-                    <img
-                      src={Add}
-                      onClick={() => {
-                        this.addToCart(item);
-                      }}
-                      alt=""
-                      style={{ width: 20, height: 20 }}
-                    />
+                    <div>
+                      <img
+                        src={Cut}
+                        onClick={() => this.clear(item.id)}
+                        alt=""
+                        style={{ width: 20, height: 20, cursor: "pointer" }}
+                      />
+                      <span
+                        style={{
+                          fontSize: 16,
+                          display: "inline-block",
+                          margin: "0 10px",
+                          fontFamily: "UniqloBold",
+                          width: 20,
+                          textAlign: "center",
+                        }}
+                      >
+                        {item.detail.sum}
+                      </span>
+                      <img
+                        src={Add}
+                        onClick={() => {
+                          this.addToCart(item);
+                        }}
+                        alt=""
+                        style={{ width: 20, height: 20, cursor: "pointer" }}
+                      />
+                    </div>
                   </li>
                 );
               })}

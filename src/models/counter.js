@@ -1,4 +1,5 @@
 import axios from "axios";
+import { url } from "../config";
 export default {
   namespace: "counter",
   state: {
@@ -16,43 +17,49 @@ export default {
       };
     },
     add(state, action) {
-      let id = action.info.id;
-      let sumPrice = state.sumPrice;
-      if (state.carListKey.includes(id)) {
-        state.carList.forEach((item, index) => {
-          if (item.id === action.info.id) {
-            item.detail.sum += 1;
-            let currentSum = item.detail.price * 1;
-            sumPrice += currentSum;
-          }
-        });
-        localStorage.setItem("carList", JSON.stringify(state.carList));
-        localStorage.setItem("carListKey", JSON.stringify(state.carListKey));
-        localStorage.setItem("sumCount", state.sumCount + 1);
-        localStorage.setItem("sumPrice", state.sumPrice);
-        return {
-          ...state,
-          carList: state.carList,
-          sumCount: state.sumCount + 1,
-          sumPrice,
-        };
-      } else {
-        let carList = [...state.carList, action.info];
-        let carListKey = [...state.carListKey, id];
-        let currentSum = action.info.detail.price * 1;
-        sumPrice += currentSum;
-        localStorage.setItem("carList", JSON.stringify(carList));
-        localStorage.setItem("carListKey", JSON.stringify(carListKey));
-        localStorage.setItem("sumCount", state.sumCount + 1);
-        localStorage.setItem("sumPrice", sumPrice);
-        return {
-          ...state,
-          carList,
-          carListKey,
-          sumCount: state.sumCount + 1,
-          sumPrice,
-        };
-      }
+      const { info } = action;
+      console.log("最后info", info);
+      return {
+        ...state,
+        ...info,
+      };
+      // let id = action.info.id;
+      // let sumPrice = state.sumPrice;
+      // if (state.carListKey.includes(id)) {
+      //   state.carList.forEach((item, index) => {
+      //     if (item.id === action.info.id) {
+      //       item.detail.sum += 1;
+      //       let currentSum = item.detail.price * 1;
+      //       sumPrice += currentSum;
+      //     }
+      //   });
+      //   localStorage.setItem("carList", JSON.stringify(state.carList));
+      //   localStorage.setItem("carListKey", JSON.stringify(state.carListKey));
+      //   localStorage.setItem("sumCount", state.sumCount + 1);
+      //   localStorage.setItem("sumPrice", state.sumPrice);
+      //   return {
+      //     ...state,
+      //     carList: state.carList,
+      //     sumCount: state.sumCount + 1,
+      //     sumPrice,
+      //   };
+      // } else {
+      //   let carList = [...state.carList, action.info];
+      //   let carListKey = [...state.carListKey, id];
+      //   let currentSum = action.info.detail.price * 1;
+      //   sumPrice += currentSum;
+      //   localStorage.setItem("carList", JSON.stringify(carList));
+      //   localStorage.setItem("carListKey", JSON.stringify(carListKey));
+      //   localStorage.setItem("sumCount", state.sumCount + 1);
+      //   localStorage.setItem("sumPrice", sumPrice);
+      //   return {
+      //     ...state,
+      //     carList,
+      //     carListKey,
+      //     sumCount: state.sumCount + 1,
+      //     sumPrice,
+      //   };
+      // }
     },
     clear(state, action) {
       let sumPrice = state.sumPrice;
@@ -92,40 +99,124 @@ export default {
         sumPrice: 0,
       };
     },
-    "fetch/success"(state, action) {
+    save(state, action) {
+      console.log("action", action.dataList);
       return {
-        carData: action.carData,
+        ...state,
+        carData: action.dataList,
       };
     },
+    //更改尺寸
+    changeSize(state, action) {
+      const { info } = action;
+      console.log("尺寸", info);
+      state.carData.forEach((item) => {
+        if (item.id === info.id) {
+          item.detail.currentSize = info.size;
+        }
+      });
+      return {
+        ...state,
+        carData: state.carData,
+      };
+    },
+    // //更改购物车尺寸
+    // changeCarSize(state, action) {
+    //   const { info } = action;
+    //   console.log("尺寸", info);
+    //   state.carData.forEach((item) => {
+    //     if (item.id === info.id) {
+    //       item.detail.carSize = info.size;
+    //     }
+    //   });
+    //   return {
+    //     ...state,
+    //     carData: state.carData,
+    //   };
+    // },
   },
   effects: {
-    *fetch(payload, { call, put }) {
+    //请求购物车数据
+    *fetch({ payload }, { call, put }) {
       const { page, pageSize, size, remark } = payload;
-      console.log("payload", page, pageSize, size, remark);
-      const dataList = yield call(
+      const data = yield call(
         axios.get,
-        "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api" +
-          "/getproductList" +
-          // `?page=${1}&pageSize=${15}&size=${"all"}&remark=${"all"}`
-          `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
+        `${url}/getproductList?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
       );
+      const dataList = data.data.data.content.data;
       yield put({ type: "save", dataList });
-      // yield put({})
-      // "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
-      // axios
-      //   .get(
-      //     url +
-      //       "/getproductList" +
-      //       `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
-      //   )
-      //   .then((res) => {
-      //     if (res.data.code === "200") {
-      //       let data = res.data.data.content.data;
-      //       this.setState({
-      //         dataList: data,
-      //       });
-      //     }
-      //   });
+    },
+    //添加购物车
+    *sendCar(payload, { call, put, select }) {
+      const { info } = payload;
+      console.log("点击了什么尺寸的", info);
+      let sumPrice = yield select((state) => state.counter.sumPrice);
+      const sumCount = yield select((state) => state.counter.sumCount);
+      const carListKey = yield select((state) => state.counter.carListKey);
+      let id = info.id;
+      let infos = {};
+      if (carListKey.includes(id)) {
+        console.log("已经有存在了", id);
+        let carList = yield select((state) => state.counter.carList);
+        carList.forEach((item, index) => {
+          if (item.id === payload.info.id) {
+            if (payload.info.detail.carSize.includes(item.detail.currentSize)) {
+              console.log(
+                "连尺寸都相等",
+                item.detail.currentSize,
+                payload.info.detail.carSize
+              );
+              item.detail.sum += 1;
+              let currentSum = item.detail.price * 1;
+              sumPrice += currentSum;
+              localStorage.setItem("carList", JSON.stringify(carList));
+              localStorage.setItem("carListKey", JSON.stringify(carListKey));
+              localStorage.setItem("sumCount", sumCount + 1);
+              localStorage.setItem("sumPrice", sumPrice);
+              infos = {
+                carList: carList,
+                sumCount: sumCount + 1,
+                sumPrice,
+              };
+            } else {
+              console.log(
+                "尺寸不相等",
+                item.detail.currentSize,
+                payload.info.detail.carSize
+              );
+              // payload.info.detail.carSize = payload.info.detail.currentSize;
+              console.log("尺寸不相等2", payload.info);
+              infos = {
+                carList: [...carList, payload.info],
+                sumCount: sumCount + 1,
+                sumPrice,
+              };
+            }
+          }
+        });
+        yield put({ type: "add", info: infos });
+      } else {
+        console.log("第一次添加", payload.info);
+        payload.info.detail.carSize = [];
+        payload.info.detail.carSize.push(payload.info.detail.currentSize);
+        let carLists = yield select((state) => state.counter.carList);
+        let carListKeys = yield select((state) => state.counter.carListKey);
+        let carList = [...carLists, payload.info];
+        let carListKey = [...carListKeys, id];
+        let currentSum = payload.info.detail.price * 1;
+        sumPrice += currentSum;
+        localStorage.setItem("carList", JSON.stringify(carList));
+        localStorage.setItem("carListKey", JSON.stringify(carListKey));
+        localStorage.setItem("sumCount", sumCount + 1);
+        localStorage.setItem("sumPrice", sumPrice);
+        let info = {
+          carList,
+          carListKey,
+          sumCount: sumCount + 1,
+          sumPrice,
+        };
+        yield put({ type: "add", info });
+      }
     },
   },
 };
