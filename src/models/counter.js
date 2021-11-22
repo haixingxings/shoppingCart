@@ -99,14 +99,17 @@ export default {
     },
   },
   effects: {
-    *fetch(_, { put }) {
+    *fetch(payload, { call, put }) {
+      const { page, pageSize, size, remark } = payload;
+      console.log("payload", page, pageSize, size, remark);
       const dataList = yield call(
         axios.get,
         "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api" +
           "/getproductList" +
+          // `?page=${1}&pageSize=${15}&size=${"all"}&remark=${"all"}`
           `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
       );
-      yield put({ type: "fetch/success", dataList });
+      yield put({ type: "save", dataList });
       // yield put({})
       // "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
       // axios

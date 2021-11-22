@@ -33,7 +33,11 @@ class IndexPage extends React.Component {
     };
   }
   componentDidMount() {
-    this.props.dispatch({ type: "counter/fetch", info });
+    // let info = { page: 1, pageSize: 15, size: "all", remark: "all" };
+    this.props.dispatch({
+      type: "counter/fetch",
+      payload: { page: 1, pageSize: 15, size: "all", remark: "all" },
+    });
     // this.getData();
     let carList =
       localStorage.getItem("carList") &&
@@ -206,8 +210,8 @@ class IndexPage extends React.Component {
         <div className={styles.container}>
           <div className={styles.product}>
             <ul className={styles["product-list"]}>
-              {this.props.counter.dataList.length
-                ? this.props.counter.dataList.map((item) => {
+              {this.props.counter.carData.length
+                ? this.props.counter.carData.map((item) => {
                     return (
                       <li key={item.id}>
                         <img
