@@ -1,5 +1,6 @@
 //购物车
 .cart {
+  z-index: 99999;
   width: 450px;
   height: 100%;
   position: fixed;
@@ -144,6 +145,7 @@
     background: #e9be00;
     color: #333;
     border-radius: 3px;
+    cursor: pointer;
   }
 }
 .carNothing {
@@ -154,32 +156,32 @@
     margin-top: 20px;
   }
 }
-.cartBottomBtn{
+.cartBottomBtn {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
-.clearAll{
+.clearAll {
   color: #e9be00;
   display: inline-block;
   margin-right: 20px;
 }
-.hTop{
+.hTop {
   display: flex;
   flex-direction: column;
   text-align: center;
   background-color: #fff;
   position: fixed;
-    width: 50px;
-    height: 50px;
-    right: 30px;
-    bottom: 100px;
-    z-index: 999;
-    cursor: pointer;
-    box-shadow: 0 0 5px #ddd;
-    justify-content: center;
-    align-items: center;
-    img{
-      width:18px ;
-    }
+  width: 50px;
+  height: 50px;
+  right: 30px;
+  bottom: 100px;
+  z-index: 999;
+  cursor: pointer;
+  box-shadow: 0 0 5px #ddd;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 18px;
+  }
 }

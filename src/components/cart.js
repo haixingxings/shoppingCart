@@ -1,7 +1,10 @@
 import React from "react";
 import { connect } from "dva";
+import { message } from "antd";
 import car2 from "../assets/car2.png";
 import close from "../assets/close.png";
+import Add from "../assets/add.png";
+import Cut from "../assets/cut.png";
 import close2 from "../assets/close2.png";
 import carNo from "../assets/carno.png";
 import assetsStyle from "./index.less";
@@ -17,22 +20,35 @@ class Cart extends React.Component {
   clear = (id) => {
     this.props.dispatch({ type: "counter/clear", id });
   };
-  clearAll=()=>{
-    this.props.dispatch({ type: "counter/clearAll"});
-  }
+  clearAll = () => {
+    this.props.dispatch({ type: "counter/clearAll" });
+  };
+  addToCart = (info) => {
+    this.props.dispatch({ type: "counter/add", info });
+  };
+  goToPay = () => {
+    if (this.props.counter.carList.length) {
+      message.success("结算成功");
+      this.props.closeSelf && this.props.closeSelf();
+      this.props.dispatch({ type: "counter/clearAll" });
+    } else {
+      message.info("快去添加你所喜欢的商品吧");
+      this.props.closeSelf && this.props.closeSelf();
+    }
+  };
   render() {
     return (
       <div className={assetsStyle.cart}>
         <div className={assetsStyle.cartbox}>
           <div className={assetsStyle.carTitle}>
-            <img src={car2} alt='carticon'/>
+            <img src={car2} alt="carticon" />
             <span>购物车</span>
           </div>
           <img
             src={close2}
             className={assetsStyle.close2}
             onClick={this.closeSelf}
-            alt='closeIcon'
+            alt="closeIcon"
           />
         </div>
         <div className={assetsStyle.cartList}>
@@ -43,7 +59,7 @@ class Cart extends React.Component {
                   <li key={item.id}>
                     <div className={assetsStyle.infoLeft}>
                       <div>
-                        <img src={item.detail.imgSm} alt='img'/>
+                        <img src={item.detail.imgSm} alt="img" />
                       </div>
                       <div className={assetsStyle.cartInfo}>
                         <a href="javascript" className={assetsStyle.itemTitle}>
@@ -64,10 +80,19 @@ class Cart extends React.Component {
                       </div>
                     </div>
                     <img
-                      src={close}
-                      className={assetsStyle.cartCLose}
+                      src={Cut}
                       onClick={() => this.clear(item.id)}
-                      alt=''
+                      alt=""
+                      style={{ width: 20, height: 20 }}
+                    />
+                    <span style={{ fontSize: 16 }}>{item.detail.sum}</span>
+                    <img
+                      src={Add}
+                      onClick={() => {
+                        this.addToCart(item);
+                      }}
+                      alt=""
+                      style={{ width: 20, height: 20 }}
                     />
                   </li>
                 );
@@ -75,7 +100,7 @@ class Cart extends React.Component {
             </ul>
           ) : (
             <div className={assetsStyle.carNothing}>
-              <img src={carNo} alt=''/>
+              <img src={carNo} alt="" />
               <div className={assetsStyle.carNoText}>购物车空空如也~</div>
             </div>
           )}
@@ -94,8 +119,12 @@ class Cart extends React.Component {
             </div>
           </div>
           <div className={assetsStyle.cartBottomBtn}>
-            <a className={assetsStyle.clearAll} onClick={this.clearAll}>清空</a>
-            <div className={assetsStyle.check}>去购物车结算</div>
+            <a className={assetsStyle.clearAll} onClick={this.clearAll}>
+              清空
+            </a>
+            <div className={assetsStyle.check} onClick={this.goToPay}>
+              去购物车结算
+            </div>
           </div>
         </div>
       </div>
