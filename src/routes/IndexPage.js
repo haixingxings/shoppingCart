@@ -13,7 +13,7 @@ class IndexPage extends React.Component {
     super(props);
     this.state = {
       isShowCart: false,
-      dataList: [],
+      // dataList: [],
       carCount: 0,
       currenIndex: 0,
       checkboxItems: [
@@ -33,7 +33,8 @@ class IndexPage extends React.Component {
     };
   }
   componentDidMount() {
-    this.getData();
+    this.props.dispatch({ type: "counter/fetch", info });
+    // this.getData();
     let carList =
       localStorage.getItem("carList") &&
       JSON.parse(localStorage.getItem("carList"));
@@ -205,8 +206,8 @@ class IndexPage extends React.Component {
         <div className={styles.container}>
           <div className={styles.product}>
             <ul className={styles["product-list"]}>
-              {this.state.dataList.length
-                ? this.state.dataList.map((item) => {
+              {this.props.counter.dataList.length
+                ? this.props.counter.dataList.map((item) => {
                     return (
                       <li key={item.id}>
                         <img

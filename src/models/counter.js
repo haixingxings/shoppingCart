@@ -6,6 +6,7 @@ export default {
     carListKey: [],
     sumCount: 0,
     sumPrice: 0,
+    carData: [],
   },
   reducers: {
     init(state, action) {
@@ -91,25 +92,37 @@ export default {
         sumPrice: 0,
       };
     },
+    "fetch/success"(state, action) {
+      return {
+        carData: action.carData,
+      };
+    },
   },
   effects: {
-    getData(page = 1, pageSize = 15, size = "all", remark = "all") {
-      let url =
-        "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
-      axios
-        .get(
-          url +
-            "/getproductList" +
-            `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
-        )
-        .then((res) => {
-          if (res.data.code === "200") {
-            let data = res.data.data.content.data;
-            this.setState({
-              dataList: data,
-            });
-          }
-        });
+    *fetch(_, { put }) {
+      const dataList = yield call(
+        axios.get,
+        "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api" +
+          "/getproductList" +
+          `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
+      );
+      yield put({ type: "fetch/success", dataList });
+      // yield put({})
+      // "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
+      // axios
+      //   .get(
+      //     url +
+      //       "/getproductList" +
+      //       `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
+      //   )
+      //   .then((res) => {
+      //     if (res.data.code === "200") {
+      //       let data = res.data.data.content.data;
+      //       this.setState({
+      //         dataList: data,
+      //       });
+      //     }
+      //   });
     },
   },
 };
