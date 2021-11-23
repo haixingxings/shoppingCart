@@ -185,3 +185,61 @@
     width: 18px;
   }
 }
+.productLi {
+  width: 232px;
+  height: 421px;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  .clothImg {
+    width: 212px;
+    height: 222px;
+    object-fit: cover;
+  }
+  .product-name {
+    margin-top: 15px;
+    color: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    line-height: 13px;
+    height: 26px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  .product-subName {
+    text-align: left;
+    font-size: 12px;
+    margin-top: 10px;
+    color: #333;
+    line-height: 13px;
+    height: 26px;
+    margin-bottom: 5px;
+  }
+  .product-price {
+    text-align: left;
+    font-size: 16px;
+    line-height: 16px;
+    margin: 0;
+    font-weight: 600;
+    font-family: UniqloBold;
+  }
+  .product-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 4px 0;
+    .add-btn {
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      background: url("../assets/car.png") top center no-repeat;
+      background-size: 24px 24px;
+      &:hover {
+        background: url("../assets/car2.png") top center no-repeat;
+        background-size: 24px 24px;
+      }
+    }
+  }
+}

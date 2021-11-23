@@ -5,6 +5,7 @@ import { Pagination, Radio } from "antd";
 import Footer from "../components/footer";
 import Cart from "../components/cart";
 import FLoatNav from "../components/floatNav";
+import ListItem from "../components/listItem";
 import styles from "./IndexPage.less";
 import lan from "../assets/lan.png";
 
@@ -34,27 +35,25 @@ class IndexPage extends React.Component {
     };
   }
   componentDidMount() {
-    // let info = { page: 1, pageSize: 15, size: "all", remark: "all" };
     this.getCartList();
-    // this.getData();
+    this.init();
+  }
+  //获取缓存购物车数据
+  init = () => {
     let carList =
       localStorage.getItem("carList") &&
       JSON.parse(localStorage.getItem("carList"));
-    let carListKey =
-      localStorage.getItem("carListKey") &&
-      JSON.parse(localStorage.getItem("carListKey"));
     let sumCount = localStorage.getItem("sumCount") * 1;
     let sumPrice = localStorage.getItem("sumPrice") * 1;
-    if (carList && carListKey && sumCount && sumPrice) {
+    if (carList && sumCount && sumPrice) {
       this.props.dispatch({
         type: "counter/init",
         carList,
-        carListKey,
         sumCount,
         sumPrice,
       });
     }
-  }
+  };
   //获取购物车列表数据
   getCartList = () => {
     this.props.dispatch({
@@ -225,58 +224,59 @@ class IndexPage extends React.Component {
               {this.props.counter.carData.length
                 ? this.props.counter.carData.map((item) => {
                     return (
-                      <li key={item.id}>
-                        <img
-                          className={styles.clothImg}
-                          src={item.detail.imgBig}
-                          alt="cloth"
-                        />
-                        <p className={styles["product-name"]}>
-                          <span>{item.detail.title}</span>
-                          {/* <span className="p-size">S-XL</span> */}
-                        </p>
-                        <a
-                          href="javascript"
-                          className={styles["product-subName"]}
-                        >
-                          {item.detail.subTitle}
-                        </a>
-                        <div style={{ margin: "10px 0" }}>
-                          <Radio.Group
-                            // defaultValue={"s"}
-                            value={
-                              item.detail.currentSize || item.detail.sizes[0]
-                            }
-                            onChange={(e) => {
-                              this.handleSizeChange(e, item.id);
-                            }}
-                          >
-                            {item.detail.sizes.map((h) => {
-                              return (
-                                <Radio.Button
-                                  value={h}
-                                  key={item.id + Math.random()}
-                                >
-                                  {h}
-                                </Radio.Button>
-                              );
-                            })}
-                          </Radio.Group>
-                        </div>
-                        <div className={styles["product-box"]}>
-                          <div className={styles["product-price"]}>
-                            <span>¥{item.detail.price}</span>
-                          </div>
-                          <div
-                            className={styles["add-btn"]}
-                            onClick={() => {
-                              this.addToCart(item);
-                            }}
-                          >
-                            {/* <img src={car} /> */}
-                          </div>
-                        </div>
-                      </li>
+                      <ListItem item={item} key={item.id + Math.random()} />
+                      // <li key={item.id}>
+                      //   <img
+                      //     className={styles.clothImg}
+                      //     src={item.detail.imgBig}
+                      //     alt="cloth"
+                      //   />
+                      //   <p className={styles["product-name"]}>
+                      //     <span>{item.detail.title}</span>
+                      //     {/* <span className="p-size">S-XL</span> */}
+                      //   </p>
+                      //   <a
+                      //     href="javascript"
+                      //     className={styles["product-subName"]}
+                      //   >
+                      //     {item.detail.subTitle}
+                      //   </a>
+                      //   <div style={{ margin: "10px 0" }}>
+                      //     <Radio.Group
+                      //       // defaultValue={"s"}
+                      //       value={
+                      //         item.detail.currentSize || item.detail.sizes[0]
+                      //       }
+                      //       onChange={(e) => {
+                      //         this.handleSizeChange(e, item.id);
+                      //       }}
+                      //     >
+                      //       {item.detail.sizes.map((h) => {
+                      //         return (
+                      //           <Radio.Button
+                      //             value={h}
+                      //             key={item.id + Math.random()}
+                      //           >
+                      //             {h}
+                      //           </Radio.Button>
+                      //         );
+                      //       })}
+                      //     </Radio.Group>
+                      //   </div>
+                      //   <div className={styles["product-box"]}>
+                      //     <div className={styles["product-price"]}>
+                      //       <span>¥{item.detail.price}</span>
+                      //     </div>
+                      //     <div
+                      //       className={styles["add-btn"]}
+                      //       onClick={() => {
+                      //         this.addToCart(item);
+                      //       }}
+                      //     >
+                      //       {/* <img src={car} /> */}
+                      //     </div>
+                      //   </div>
+                      // </li>
                     );
                   })
                 : null}

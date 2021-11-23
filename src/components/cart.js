@@ -17,14 +17,19 @@ class Cart extends React.Component {
   closeSelf = () => {
     this.props.closeSelf && this.props.closeSelf();
   };
-  clear = (id) => {
-    this.props.dispatch({ type: "counter/clear", id });
+  clear = (item) => {
+    console.log("你要减去的是", item);
+    this.props.dispatch({ type: "counter/clear", data: item });
   };
   clearAll = () => {
     this.props.dispatch({ type: "counter/clearAll" });
   };
   addToCart = (info) => {
-    this.props.dispatch({ type: "counter/sendCar", info });
+    this.props.dispatch({
+      type: "counter/sendCar",
+      info,
+      currentSize: info.detail.currentSize,
+    });
   };
   goToPay = () => {
     if (this.props.counter.carList.length) {
@@ -84,7 +89,8 @@ class Cart extends React.Component {
                           </span>
                         </p>
                         <div style={{ margin: "10px 0" }}>
-                          <Radio.Group
+                          {item.detail.currentSize}
+                          {/* <Radio.Group
                             // defaultValue={"s"}
                             value={item.detail.carSize}
                             onChange={(e) => {
@@ -101,14 +107,14 @@ class Cart extends React.Component {
                                 </Radio.Button>
                               );
                             })}
-                          </Radio.Group>
+                          </Radio.Group> */}
                         </div>
                       </div>
                     </div>
                     <div>
                       <img
                         src={Cut}
-                        onClick={() => this.clear(item.id)}
+                        onClick={() => this.clear(item)}
                         alt=""
                         style={{ width: 20, height: 20, cursor: "pointer" }}
                       />
