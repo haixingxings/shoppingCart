@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "dva";
-import { message, Radio } from "antd";
+import { message } from "antd";
 import car2 from "../assets/car2.png";
-import close from "../assets/close.png";
 import Add from "../assets/add.png";
 import Cut from "../assets/cut.png";
 import close2 from "../assets/close2.png";
@@ -18,34 +17,32 @@ class Cart extends React.Component {
     this.props.closeSelf && this.props.closeSelf();
   };
   clear = (item) => {
-    console.log("你要减去的是", item);
-    this.props.dispatch({ type: "counter/clear", data: item });
+    this.props.dispatch({ type: "cart/clear", data: item });
   };
   clearAll = () => {
-    this.props.dispatch({ type: "counter/clearAll" });
+    this.props.dispatch({ type: "cart/clearAll" });
   };
   addToCart = (info) => {
     this.props.dispatch({
-      type: "counter/sendCar",
+      type: "cart/sendCar",
       info,
       currentSize: info.detail.currentSize,
     });
   };
   goToPay = () => {
-    if (this.props.counter.carList.length) {
+    if (this.props.cart.carList.length) {
       message.success("结算成功");
       this.props.closeSelf && this.props.closeSelf();
-      this.props.dispatch({ type: "counter/clearAll" });
+      this.props.dispatch({ type: "cart/clearAll" });
     } else {
       message.info("快去添加你所喜欢的商品吧");
       this.props.closeSelf && this.props.closeSelf();
     }
   };
   handleSizeChange = (e, id) => {
-    console.log("在内部选择尺寸", e.target.value);
     this.setState({ size: e.target.value });
     let info = { id, size: e.target.value };
-    this.props.dispatch({ type: "counter/changeSize", info });
+    this.props.dispatch({ type: "cart/changeSize", info });
   };
   render() {
     return (
@@ -63,9 +60,9 @@ class Cart extends React.Component {
           />
         </div>
         <div className={assetsStyle.cartList}>
-          {this.props.counter.carList.length ? (
+          {this.props.cart.carList.length ? (
             <ul>
-              {this.props.counter.carList.map((item) => {
+              {this.props.cart.carList.map((item) => {
                 return (
                   <li key={item.id + Math.random()}>
                     <div className={assetsStyle.infoLeft}>
@@ -154,12 +151,12 @@ class Cart extends React.Component {
           <div>
             <div className={assetsStyle.cartAllcount}>
               {" "}
-              <span>{this.props.counter.sumCount}</span>件商品
+              <span>{this.props.cart.sumCount}</span>件商品
             </div>
             <div className={assetsStyle.cartAllPrice}>
               总计：
               <span className={assetsStyle.cartprices}>
-                ¥{this.props.counter.sumPrice}
+                ¥{this.props.cart.sumPrice}
               </span>
             </div>
           </div>
@@ -178,7 +175,7 @@ class Cart extends React.Component {
 }
 const mapStateToProps = (state) => {
   return {
-    counter: state.counter,
+    cart: state.cart,
   };
 };
 export default connect(mapStateToProps)(Cart);

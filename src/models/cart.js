@@ -1,10 +1,9 @@
 import axios from "axios";
 import { url } from "../config";
 export default {
-  namespace: "counter",
+  namespace: "cart",
   state: {
     carList: [],
-    carListKey: [],
     sumCount: 0,
     sumPrice: 0,
     carData: [],
@@ -18,7 +17,6 @@ export default {
     },
     add(state, action) {
       const { info } = action;
-      console.log("最后添加的info", info);
       return {
         ...state,
         ...info,
@@ -26,27 +24,19 @@ export default {
     },
     cut(state, action) {
       const { info } = action;
-      console.log("最后减去的info", info);
       return {
         ...state,
         ...info,
       };
     },
-    clearAll(state, action) {
-      localStorage.removeItem("carList");
-      localStorage.removeItem("carListKey");
-      localStorage.removeItem("sumCount");
-      localStorage.removeItem("sumPrice");
+    clearAlls(state, action) {
+      const { info } = action;
       return {
         ...state,
-        carList: [],
-        carListKey: [],
-        sumCount: 0,
-        sumPrice: 0,
+        ...info,
       };
     },
     save(state, action) {
-      console.log("action", action.dataList);
       return {
         ...state,
         carData: action.dataList,
@@ -58,7 +48,6 @@ export default {
       state.carData.forEach((item) => {
         if (item.id === info.id) {
           item.detail.currentSize = info.size;
-          console.log("更改尺寸", item);
         }
       });
       return {
@@ -76,33 +65,20 @@ export default {
         `${url}/getproductList?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
       );
       const dataList = data.data.data.content.data;
-      // dataList.detail.carSize = [];
-      // dataList.detail.currentSize = dataList.detail.sizes[0];
-      console.log("产品列表数据", dataList);
       yield put({ type: "save", dataList });
     },
     //添加购物车
     *sendCar(payload, { call, put, select }) {
       const { info, currentSize } = payload;
       let infoData = JSON.parse(JSON.stringify(info));
-      console.log("点击了什么尺寸的", infoData, currentSize);
       infoData.detail.sum += 1;
       infoData.detail.currentSize = currentSize;
-      let sumPrice = yield select((state) => state.counter.sumPrice);
-      const sumCount = yield select((state) => state.counter.sumCount);
-      const carListKey = yield select((state) => state.counter.carListKey);
-      let id = infoData.id;
+      let sumPrice = yield select((state) => state.cart.sumPrice);
+      const sumCount = yield select((state) => state.cart.sumCount);
       let infos = {};
-      let carList = yield select((state) => state.counter.carList);
-      console.log("初始化carlist", carList);
+      let carList = yield select((state) => state.cart.carList);
       if (carList.length) {
         carList.forEach((item, index) => {
-          console.log("id比较", item.id, infoData.id);
-          console.log(
-            "尺码比较",
-            item.detail.currentSize,
-            infoData.detail.currentSize
-          );
           if (
             item.id === infoData.id &&
             item.detail.currentSize === infoData.detail.currentSize
@@ -111,21 +87,17 @@ export default {
           }
         });
         let findone = carList.find((item) => {
-          console.log("find", item);
           return (
             item.id === infoData.id &&
             item.detail.currentSize === infoData.detail.currentSize
           );
         });
-        console.log("findone", findone);
         if (!findone) {
           carList.push(infoData);
         }
       } else {
         carList.push(infoData);
       }
-      console.log("此时购物车", carList);
-      console.log("之前的钱", sumPrice);
       let currentSum = infoData.detail.price * 1;
       sumPrice += currentSum;
       localStorage.setItem("carList", JSON.stringify(carList));
@@ -138,20 +110,18 @@ export default {
       };
       yield put({ type: "add", info: infos });
     },
+    //删减数量
     *clear(payload, { call, put, select }) {
-      console.log("减去", payload);
       const { data } = payload;
-      let sumPrice = yield select((state) => state.counter.sumPrice);
-      let sumCount = yield select((state) => state.counter.sumCount);
-      let carList = yield select((state) => state.counter.carList);
+      let sumPrice = yield select((state) => state.cart.sumPrice);
+      let sumCount = yield select((state) => state.cart.sumCount);
+      let carList = yield select((state) => state.cart.carList);
       let infos = {};
-      // let sumPrice = state.sumPrice;
       carList.forEach((item, index) => {
         if (
           item.id === data.id &&
           item.detail.currentSize === data.detail.currentSize
         ) {
-          console.log("说明找到要减去的了", item);
           let currentSum = item.detail.price * 1;
           if (item.detail.sum > 1) {
             item.detail.sum -= 1;
@@ -177,6 +147,18 @@ export default {
         }
       });
       yield put({ type: "cut", info: infos });
+    },
+    //清空购物车
+    *clearAll(payload, { call, put, select }) {
+      localStorage.removeItem("carList");
+      localStorage.removeItem("sumCount");
+      localStorage.removeItem("sumPrice");
+      let infos = {
+        carList: [],
+        sumCount: 0,
+        sumPrice: 0,
+      };
+      yield put({ type: "clearAlls", info: infos });
     },
   },
 };

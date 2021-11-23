@@ -12,20 +12,18 @@ class ListItem extends React.Component {
   }
   componentDidMount() {}
   handleSizeChange = (e, id) => {
-    console.log("选择的尺寸", e.target.value);
     this.setState({ currentSize: e.target.value });
     // let info = { id, size: e.target.value };
     // this.props.dispatch({ type: "counter/changeSize", info });
   };
   addToCart = (info) => {
     this.props.dispatch({
-      type: "counter/sendCar",
+      type: "cart/sendCar",
       info,
       currentSize: this.state.currentSize,
     });
   };
   render() {
-    // console.log("购物车数据", this.props.counter);
     const { item } = this.props;
     return (
       <li key={item.id} className={styles.productLi}>
@@ -75,7 +73,7 @@ class ListItem extends React.Component {
 ListItem.propTypes = {};
 const mapStateToProps = (state) => {
   return {
-    counter: state.counter,
+    cart: state.cart,
   };
 };
 export default connect(mapStateToProps)(ListItem);

@@ -1,21 +1,15 @@
 import dva from "dva";
 import "antd/dist/antd.css";
-// import zhCN from 'antd/es/locale/zh_CN';
-// import {createBrowserHistory as createHistory} from 'history';
-import "./index.css";
+import "./index.less";
 
 // 1. Initialize
-const app = dva(
-//   {
-//   history:createHistory()
-// }
-);
+const app = dva();
 
 // 2. Plugins
 // app.use({});
 
 // 3. Model
-app.model(require("./models/counter").default);
+app.model(require("./models/cart").default);
 
 // 4. Router
 app.router(require("./router").default);

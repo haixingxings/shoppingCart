@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import axios from "axios";
-import { Pagination, Radio } from "antd";
+import { Pagination } from "antd";
 import Footer from "../components/footer";
 import Cart from "../components/cart";
 import FLoatNav from "../components/floatNav";
@@ -47,7 +46,7 @@ class IndexPage extends React.Component {
     let sumPrice = localStorage.getItem("sumPrice") * 1;
     if (carList && sumCount && sumPrice) {
       this.props.dispatch({
-        type: "counter/init",
+        type: "cart/init",
         carList,
         sumCount,
         sumPrice,
@@ -57,7 +56,7 @@ class IndexPage extends React.Component {
   //获取购物车列表数据
   getCartList = (payload) => {
     this.props.dispatch({
-      type: "counter/fetch",
+      type: "cart/fetch",
       payload,
     });
   };
@@ -85,13 +84,12 @@ class IndexPage extends React.Component {
   //     });
   // };
   handleSizeChange = (e, id) => {
-    console.log("选择的尺寸", e.target.value);
     this.setState({ size: e.target.value });
     let info = { id, size: e.target.value };
-    this.props.dispatch({ type: "counter/changeSize", info });
+    this.props.dispatch({ type: "cart/changeSize", info });
   };
   addToCart = (info) => {
-    this.props.dispatch({ type: "counter/sendCar", info });
+    this.props.dispatch({ type: "cart/sendCar", info });
   };
   getVal = (index) => {
     //复制原来的数组
@@ -167,7 +165,6 @@ class IndexPage extends React.Component {
     );
   };
   render() {
-    // console.log("购物车数据", this.props.counter);
     return (
       <div className={`${styles.normal}`}>
         <div className={styles.container}>
@@ -239,8 +236,8 @@ class IndexPage extends React.Component {
         <div className={styles.container}>
           <div className={styles.product}>
             <ul className={styles["product-list"]}>
-              {this.props.counter.carData.length
-                ? this.props.counter.carData.map((item) => {
+              {this.props.cart.carData.length
+                ? this.props.cart.carData.map((item) => {
                     return (
                       <ListItem item={item} key={item.id + Math.random()} />
                       // <li key={item.id}>
@@ -313,7 +310,7 @@ class IndexPage extends React.Component {
         <FLoatNav />
         <div className={styles.showCarBtn} onClick={() => this.showCart(true)}>
           <img src={lan} alt="cart" />
-          <span className={styles.carCount}>{this.props.counter.sumCount}</span>
+          <span className={styles.carCount}>{this.props.cart.sumCount}</span>
         </div>
         {this.state.isShowCart ? (
           <Cart closeSelf={() => this.showCart(false)} />
@@ -327,7 +324,7 @@ class IndexPage extends React.Component {
 IndexPage.propTypes = {};
 const mapStateToProps = (state) => {
   return {
-    counter: state.counter,
+    cart: state.cart,
   };
 };
 export default connect(mapStateToProps)(IndexPage);
