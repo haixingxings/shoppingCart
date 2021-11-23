@@ -89,7 +89,7 @@ class Cart extends React.Component {
                           </span>
                         </p>
                         <div style={{ margin: "10px 0" }}>
-                          {item.detail.currentSize}
+                          尺码：{item.detail.currentSize}
                           {/* <Radio.Group
                             // defaultValue={"s"}
                             value={item.detail.carSize}

@@ -35,7 +35,7 @@ class IndexPage extends React.Component {
     };
   }
   componentDidMount() {
-    this.getCartList();
+    this.getCartList({ page: 1, pageSize: 15, size: "all", remark: "all" });
     this.init();
   }
   //获取缓存购物车数据
@@ -55,10 +55,10 @@ class IndexPage extends React.Component {
     }
   };
   //获取购物车列表数据
-  getCartList = () => {
+  getCartList = (payload) => {
     this.props.dispatch({
       type: "counter/fetch",
-      payload: { page: 1, pageSize: 15, size: "all", remark: "all" },
+      payload,
     });
   };
   showCart = (bool) => {
@@ -104,12 +104,18 @@ class IndexPage extends React.Component {
         current: 1,
       },
       () => {
-        this.getData(
-          1,
-          15,
-          items[index].key,
-          this.state.remakItems[this.state.currenRemarkIndex].key
-        );
+        this.getCartList({
+          page: 1,
+          pageSize: 15,
+          size: items[index].key,
+          remark: this.state.remakItems[this.state.currenRemarkIndex].key,
+        });
+        // this.getData(
+        //   1,
+        //   15,
+        //   items[index].key,
+        //   this.state.remakItems[this.state.currenRemarkIndex].key
+        // );
       }
     );
   };
@@ -124,12 +130,18 @@ class IndexPage extends React.Component {
         current: 1,
       },
       () => {
-        this.getData(
-          1,
-          15,
-          this.state.checkboxItems[this.state.currenIndex].key,
-          items[index].key
-        );
+        this.getCartList({
+          page: 1,
+          pageSize: 15,
+          size: this.state.checkboxItems[this.state.currenIndex].key,
+          remark: items[index].key,
+        });
+        // this.getData(
+        //   1,
+        //   15,
+        //   this.state.checkboxItems[this.state.currenIndex].key,
+        //   items[index].key
+        // );
       }
     );
   };
@@ -139,12 +151,18 @@ class IndexPage extends React.Component {
         current: page,
       },
       () => {
-        this.getData(
+        this.getCartList({
           page,
           pageSize,
-          this.state.checkboxItems[this.state.currenIndex].key,
-          this.state.remakItems[this.state.currenRemarkIndex].key
-        );
+          size: this.state.checkboxItems[this.state.currenIndex].key,
+          remark: this.state.remakItems[this.state.currenRemarkIndex].key,
+        });
+        // this.getData(
+        //   page,
+        //   pageSize,
+        //   this.state.checkboxItems[this.state.currenIndex].key,
+        //   this.state.remakItems[this.state.currenRemarkIndex].key
+        // );
       }
     );
   };

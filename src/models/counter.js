@@ -163,6 +163,12 @@ export default {
           localStorage.setItem("carList", JSON.stringify(carList));
           localStorage.setItem("sumCount", sumCount);
           localStorage.setItem("sumPrice", sumPrice);
+          if (sumCount < 0) {
+            sumCount = 0;
+          }
+          if (sumPrice < 0) {
+            sumPrice = 0;
+          }
           infos = {
             carList,
             sumCount,
