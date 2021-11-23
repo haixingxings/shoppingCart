@@ -7,6 +7,7 @@ import FLoatNav from "../components/floatNav";
 import ListItem from "../components/listItem";
 import styles from "./IndexPage.less";
 import lan from "../assets/lan.png";
+import loadingIcon from "../assets/loading.gif";
 
 class IndexPage extends React.Component {
   constructor(props) {
@@ -65,24 +66,6 @@ class IndexPage extends React.Component {
       isShowCart: bool,
     });
   };
-  // getData = (page = 1, pageSize = 15, size = "all", remark = "all") => {
-  //   let url =
-  //     "https://www.fastmock.site/mock/1d1e4fb3d58f7c7f823d24ce33529a1e/api";
-  //   axios
-  //     .get(
-  //       url +
-  //         "/getproductList" +
-  //         `?page=${page}&pageSize=${pageSize}&size=${size}&remark=${remark}`
-  //     )
-  //     .then((res) => {
-  //       if (res.data.code === "200") {
-  //         let data = res.data.data.content.data;
-  //         this.setState({
-  //           dataList: data,
-  //         });
-  //       }
-  //     });
-  // };
   handleSizeChange = (e, id) => {
     this.setState({ size: e.target.value });
     let info = { id, size: e.target.value };
@@ -108,12 +91,6 @@ class IndexPage extends React.Component {
           size: items[index].key,
           remark: this.state.remakItems[this.state.currenRemarkIndex].key,
         });
-        // this.getData(
-        //   1,
-        //   15,
-        //   items[index].key,
-        //   this.state.remakItems[this.state.currenRemarkIndex].key
-        // );
       }
     );
   };
@@ -134,12 +111,6 @@ class IndexPage extends React.Component {
           size: this.state.checkboxItems[this.state.currenIndex].key,
           remark: items[index].key,
         });
-        // this.getData(
-        //   1,
-        //   15,
-        //   this.state.checkboxItems[this.state.currenIndex].key,
-        //   items[index].key
-        // );
       }
     );
   };
@@ -155,12 +126,6 @@ class IndexPage extends React.Component {
           size: this.state.checkboxItems[this.state.currenIndex].key,
           remark: this.state.remakItems[this.state.currenRemarkIndex].key,
         });
-        // this.getData(
-        //   page,
-        //   pageSize,
-        //   this.state.checkboxItems[this.state.currenIndex].key,
-        //   this.state.remakItems[this.state.currenRemarkIndex].key
-        // );
       }
     );
   };
@@ -214,98 +179,38 @@ class IndexPage extends React.Component {
                   </ul>
                 </div>
               </li>
-              <div>
-                {/* {this.state.checkboxItems.map((ele, index) => {
-                  return (
-                    <span key={index}>
-                      <input
-                        type="checkbox"
-                        name=""
-                        value={index}
-                        checked={ele.checked}
-                        onChange={() => this.getVal(index)}
-                      />
-                      <span>{ele.content}</span>
-                    </span>
-                  );
-                })} */}
-              </div>
             </ul>
           </div>
         </div>
         <div className={styles.container}>
-          <div className={styles.product}>
-            <ul className={styles["product-list"]}>
-              {this.props.cart.carData.length
-                ? this.props.cart.carData.map((item) => {
-                    return (
-                      <ListItem item={item} key={item.id + Math.random()} />
-                      // <li key={item.id}>
-                      //   <img
-                      //     className={styles.clothImg}
-                      //     src={item.detail.imgBig}
-                      //     alt="cloth"
-                      //   />
-                      //   <p className={styles["product-name"]}>
-                      //     <span>{item.detail.title}</span>
-                      //     {/* <span className="p-size">S-XL</span> */}
-                      //   </p>
-                      //   <a
-                      //     href="javascript"
-                      //     className={styles["product-subName"]}
-                      //   >
-                      //     {item.detail.subTitle}
-                      //   </a>
-                      //   <div style={{ margin: "10px 0" }}>
-                      //     <Radio.Group
-                      //       // defaultValue={"s"}
-                      //       value={
-                      //         item.detail.currentSize || item.detail.sizes[0]
-                      //       }
-                      //       onChange={(e) => {
-                      //         this.handleSizeChange(e, item.id);
-                      //       }}
-                      //     >
-                      //       {item.detail.sizes.map((h) => {
-                      //         return (
-                      //           <Radio.Button
-                      //             value={h}
-                      //             key={item.id + Math.random()}
-                      //           >
-                      //             {h}
-                      //           </Radio.Button>
-                      //         );
-                      //       })}
-                      //     </Radio.Group>
-                      //   </div>
-                      //   <div className={styles["product-box"]}>
-                      //     <div className={styles["product-price"]}>
-                      //       <span>¥{item.detail.price}</span>
-                      //     </div>
-                      //     <div
-                      //       className={styles["add-btn"]}
-                      //       onClick={() => {
-                      //         this.addToCart(item);
-                      //       }}
-                      //     >
-                      //       {/* <img src={car} /> */}
-                      //     </div>
-                      //   </div>
-                      // </li>
-                    );
-                  })
-                : null}
-            </ul>
-          </div>
-        </div>
-        <div className={styles.pagination}>
-          <Pagination
-            current={this.state.current}
-            total={20}
-            pageSize={15}
-            hideOnSinglePage={true}
-            onChange={this.changePage}
-          />
+          {this.props.cart.isLoading ? (
+            <div className={styles.loading}>
+              <img src={loadingIcon} alt="" />
+            </div>
+          ) : (
+            <div>
+              <div className={styles.product}>
+                <ul className={styles["product-list"]}>
+                  {this.props.cart.carData.length
+                    ? this.props.cart.carData.map((item) => {
+                        return (
+                          <ListItem item={item} key={item.id + Math.random()} />
+                        );
+                      })
+                    : null}
+                </ul>
+              </div>
+              <div className={styles.pagination}>
+                <Pagination
+                  current={this.state.current}
+                  total={20}
+                  pageSize={15}
+                  hideOnSinglePage={true}
+                  onChange={this.changePage}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <FLoatNav />
         <div className={styles.showCarBtn} onClick={() => this.showCart(true)}>

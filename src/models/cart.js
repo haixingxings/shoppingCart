@@ -7,6 +7,7 @@ export default {
     sumCount: 0,
     sumPrice: 0,
     carData: [],
+    isLoading: false,
   },
   reducers: {
     init(state, action) {
@@ -42,6 +43,12 @@ export default {
         carData: action.dataList,
       };
     },
+    loadingStatus(state, action) {
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      };
+    },
     //更改尺寸
     changeSize(state, action) {
       const { info } = action;
@@ -59,6 +66,7 @@ export default {
   effects: {
     //请求产品列表数据
     *fetch({ payload }, { call, put }) {
+      yield put({ type: "loadingStatus", isLoading: true });
       const { page, pageSize, size, remark } = payload;
       const data = yield call(
         axios.get,
@@ -66,6 +74,7 @@ export default {
       );
       const dataList = data.data.data.content.data;
       yield put({ type: "save", dataList });
+      yield put({ type: "loadingStatus", isLoading: false });
     },
     //添加购物车
     *sendCar(payload, { call, put, select }) {
